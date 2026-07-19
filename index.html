@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Verification Desk — Fake News Detector</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Wire ticker -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker__track" id="tickerTrack"></div>
+  </div>
+
+  <header class="masthead">
+    <div class="masthead__inner">
+      <p class="masthead__eyebrow">An ML-Powered Newsroom Utility · Est. 2026</p>
+      <h1 class="masthead__title">The Verification Desk</h1>
+      <p class="masthead__sub">Paste any headline or article. The desk reads it for tone, sourcing, and style — the same signals a copy editor checks before a story runs.</p>
+      <div class="masthead__rule"></div>
+      <p class="masthead__dateline" id="dateline"></p>
+    </div>
+  </header>
+
+  <main class="desk">
+
+    <!-- LEFT: intake console -->
+    <section class="console" aria-label="Submit article for verification">
+      <div class="sheet">
+        <div class="sheet__pin"></div>
+        <label class="sheet__label" for="articleInput">DISPATCH — PASTE TEXT FOR REVIEW</label>
+        <textarea id="articleInput" class="sheet__textarea" placeholder="e.g. &quot;Officials in Geneva confirmed Tuesday that the trade talks will resume next month, according to a joint statement...&quot;"></textarea>
+        <div class="sheet__footer">
+          <span class="sheet__count" id="charCount">0 characters</span>
+          <button class="btn btn--stamp" id="analyzeBtn">
+            <span class="btn__label">RUN VERIFICATION</span>
+          </button>
+        </div>
+        <p class="sheet__error" id="errorMsg" hidden></p>
+      </div>
+
+      <div class="case-files">
+        <p class="case-files__label">CASE FILES — LOAD A SAMPLE DISPATCH</p>
+        <div class="case-files__row">
+          <button class="tab tab--real" data-sample="real">Sample: measured &amp; sourced</button>
+          <button class="tab tab--fake" data-sample="fake">Sample: sensational &amp; unsourced</button>
+          <button class="tab tab--clear" id="clearBtn">Clear sheet</button>
+        </div>
+      </div>
+
+      <div class="history" id="historyPanel">
+        <p class="history__label">RECENT DISPATCHES THIS SESSION</p>
+        <ul class="history__list" id="historyList">
+          <li class="history__empty">Nothing reviewed yet — run your first verification.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- RIGHT: verdict / results -->
+    <section class="results" aria-label="Verification results">
+
+      <div class="verdict-board" id="verdictBoard">
+        <div class="verdict-board__placeholder" id="placeholder">
+          <svg viewBox="0 0 64 64" class="placeholder__icon" aria-hidden="true">
+            <rect x="8" y="6" width="48" height="52" rx="2" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="16" y1="18" x2="48" y2="18" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="16" y1="27" x2="48" y2="27" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="16" y1="36" x2="38" y2="36" stroke="currentColor" stroke-width="2.5"/>
+            <circle cx="46" cy="46" r="12" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="54.5" y1="54.5" x2="61" y2="61" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <p>Run a verification to see the desk's ruling, confidence, and the evidence behind it.</p>
+        </div>
+
+        <div class="verdict-board__content" id="verdictContent" hidden>
+          <div class="stamp-wrap">
+            <div class="stamp" id="stampEl">VERIFIED</div>
+          </div>
+
+          <div class="confidence">
+            <div class="confidence__row">
+              <span>FAKE</span>
+              <span>REAL</span>
+            </div>
+            <div class="confidence__bar">
+              <div class="confidence__fill confidence__fill--fake" id="fillFake"></div>
+              <div class="confidence__fill confidence__fill--real" id="fillReal"></div>
+            </div>
+            <div class="confidence__row confidence__row--values">
+              <span id="probFake">0%</span>
+              <span id="probReal">0%</span>
+            </div>
+          </div>
+
+          <div class="evidence">
+            <p class="evidence__label">STYLISTIC SIGNALS DETECTED</p>
+            <ul class="evidence__list" id="signalsList"></ul>
+          </div>
+
+          <div class="terms">
+            <p class="terms__label">WORDS THAT SWAYED THE RULING</p>
+            <div class="terms__tags" id="termsList"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="statplate" id="statplate">
+        <p class="statplate__label">MODEL DATA PLATE</p>
+        <div class="statplate__grid" id="statGrid">
+          <div class="statplate__item"><span class="statplate__num">—</span><span class="statplate__key">Accuracy</span></div>
+          <div class="statplate__item"><span class="statplate__num">—</span><span class="statplate__key">Precision</span></div>
+          <div class="statplate__item"><span class="statplate__num">—</span><span class="statplate__key">Recall</span></div>
+          <div class="statplate__item"><span class="statplate__num">—</span><span class="statplate__key">F1 Score</span></div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="colophon">
+    <p><strong>How it works:</strong> TF-IDF text vectorization + hand-engineered stylistic features (punctuation, capitalization, sensational-phrase lexicon) feed a Logistic Regression classifier trained on labeled REAL/FAKE dispatches.</p>
+    <p class="colophon__note">Educational project — verdicts are model predictions, not fact-checks. For real decisions, verify against primary sources.</p>
+  </footer>
+
+<script src="script.js"></script>
+</body>
+</html>
